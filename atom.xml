@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>f0x&#39;s ink</title>
+  <title>Cookia&#39;s Ink</title>
   
   <subtitle>Have more fun</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://f0x.ink/"/>
+  <link href="http://cookia.cc/"/>
   <updated>2017-09-24T11:37:17.875Z</updated>
-  <id>http://f0x.ink/</id>
+  <id>http://cookia.cc/</id>
   
   <author>
-    <name>f0x</name>
+    <name>Cookia</name>
     
   </author>
   
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Redos攻击原理与检测防御</title>
-    <link href="http://f0x.ink/2017/09/13/redos/"/>
-    <id>http://f0x.ink/2017/09/13/redos/</id>
+    <link href="http://cookia.cc/2017/09/13/redos/"/>
+    <id>http://cookia.cc/2017/09/13/redos/</id>
     <published>2017-09-13T14:38:40.000Z</published>
     <updated>2017-09-24T11:37:17.875Z</updated>
     
@@ -43,19 +43,19 @@
     
     </summary>
     
-      <category term="安全" scheme="http://f0x.ink/categories/%E5%AE%89%E5%85%A8/"/>
+      <category term="安全" scheme="http://cookia.cc/categories/%E5%AE%89%E5%85%A8/"/>
     
     
-      <category term="dos" scheme="http://f0x.ink/tags/dos/"/>
+      <category term="dos" scheme="http://cookia.cc/tags/dos/"/>
     
-      <category term="正则表达式" scheme="http://f0x.ink/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+      <category term="正则表达式" scheme="http://cookia.cc/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>华科印象</title>
-    <link href="http://f0x.ink/2017/09/11/hust/"/>
-    <id>http://f0x.ink/2017/09/11/hust/</id>
+    <link href="http://cookia.cc/2017/09/11/hust/"/>
+    <id>http://cookia.cc/2017/09/11/hust/</id>
     <published>2017-09-11T14:16:40.000Z</published>
     <updated>2017-09-24T11:35:52.206Z</updated>
     
@@ -68,10 +68,10 @@
     
     </summary>
     
-      <category term="随笔" scheme="http://f0x.ink/categories/%E9%9A%8F%E7%AC%94/"/>
+      <category term="随笔" scheme="http://cookia.cc/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-      <category term="印象" scheme="http://f0x.ink/tags/%E5%8D%B0%E8%B1%A1/"/>
+      <category term="印象" scheme="http://cookia.cc/tags/%E5%8D%B0%E8%B1%A1/"/>
     
   </entry>
   
