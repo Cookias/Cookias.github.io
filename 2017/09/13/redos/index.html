@@ -107,7 +107,7 @@
 <meta property="og:image" content="http://cookia.cc/assets/blogimg/tech/tech-1.png">
 <meta property="og:image" content="http://cookia.cc/assets/blogimg/tech/tech-2.png">
 <meta property="og:image" content="http://cookia.cc/assets/blogimg/tech/tech-3.png">
-<meta property="og:updated_time" content="2017-09-24T11:37:17.875Z">
+<meta property="og:updated_time" content="2017-12-22T14:41:55.930Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redos攻击原理与检测防御">
 <meta name="twitter:description" content="同名博客发表于菊厂3ms  Regular expression Denial of Service (ReDoS)是一种利用程序实现时采用了不安全的正则表达式，从而构造特定输入引起DOS拒绝服务的一种攻击手段。 在正式讨论ReDos之前，先来介绍一下预备知识。 Regex与DFA、NFA 不想看原理可以直接跳过去看例子，部分人可秒懂  正则表达式，又称规则表达式，英文名为Regular Exp">
@@ -414,7 +414,7 @@
 
       
         <blockquote>
-<p>同名博客发表于菊厂3ms</p>
+<p>同名博客发表于菊厂3ms<br><!-- <img src="/assets/blogimg/notes/notes-3.jpg" width = "50%" /> --></p>
 </blockquote>
 <p><strong>Regular expression Denial of Service (ReDoS)是一种利用程序实现时采用了不安全的正则表达式，从而构造特定输入引起DOS拒绝服务的一种攻击手段。</strong></p>
 <p>在正式讨论ReDos之前，先来介绍一下预备知识。</p>
@@ -434,28 +434,28 @@
 <li>也有使用DFA/NFA混合的引擎：GNU awk,GNU grep/egrep,Tcl。</li>
 </ul>
 <p><strong>下面用实例来说明正则匹配时，NFA与DFA引擎的区别：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">字符串： hello regextest</div><div class="line">正则表达式：  \reg(axtest|extext|extest)</div></pre></td></tr></table></figure></p>
-<p><strong>DFA</strong>：拿着字符串文本去匹配正则表达式。<br>hello没有正则匹配的，去掉，reg匹配上了，继续；exte和第二、三分支匹配，继续；st和第三分支匹配，至此，regextest匹配成功，结束。过程中字符串只遍历了一次。</p>
-<p><strong>NFA</strong>：拿着正则表达式去对比字符串文本。<br>r-&gt;淘汰hello，匹配到r，e-&gt;e，g-&gt;g，a-&gt;e失败，回溯到上一个匹配的g，匹配下一个正则，e-&gt;e，x-&gt;x，t-&gt;t，e-&gt;e，x-&gt;s失败，回溯到上一个匹配的e，匹配下一个正则，s-&gt;s，t-&gt;t，匹配成功，结束。过程中字符串遍历了多次。</p>
+<p><code>DFA</code>：拿着字符串文本去匹配正则表达式。<br>hello没有正则匹配的，去掉，reg匹配上了，继续；exte和第二、三分支匹配，继续；st和第三分支匹配，至此，regextest匹配成功，结束。过程中字符串只遍历了一次。</p>
+<p><code>NFA</code>：拿着正则表达式去对比字符串文本。<br>r-&gt;淘汰hello，匹配到r，e-&gt;e，g-&gt;g，a-&gt;e失败，回溯到上一个匹配的g，匹配下一个正则，e-&gt;e，x-&gt;x，t-&gt;t，e-&gt;e，x-&gt;s失败，回溯到上一个匹配的e，匹配下一个正则，s-&gt;s，t-&gt;t，匹配成功，结束。过程中字符串遍历了多次。</p>
 <h3 id="DOS"><a href="#DOS" class="headerlink" title="DOS"></a>DOS</h3><p><strong>DOS攻击</strong>这里引用段子嘎的介绍：<br>DoS（Denial of Service，拒绝服务）是一种网络攻击手段，通过大量合法的请求占用大量网络资源，以达到瘫痪网络的目的。<br>形象一点的比喻是，你开了一家小面馆，黑客派了几个广场的大爷大妈涌入你的店里坐着吹空调，也不消费就霸着场子，导致其他顾客根本无法进店消费。<br>想详细了解可自行去查资料。</p>
 <p><br></p>
 <h2 id="下面开始介绍本文重点：ReDos"><a href="#下面开始介绍本文重点：ReDos" class="headerlink" title="下面开始介绍本文重点：ReDos"></a>下面开始介绍本文重点：ReDos</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>本文主要介绍使用NFA引擎的程序语言，使用DFA引擎的程序不存在ReDos。因为NFA引擎的回溯机制，导致了当字符串文本与正则表达式不匹配时，所花费的时间要比匹配时长的多。<br>简单点说，确定匹配成功就不做了，但是要确定匹配失败，则需要与所有可能的路径进行对比匹配，都证明匹配不了，才能确定匹配失败。</p>
 <p>此时，如果使用简单的非分组正则表达式来进行匹配，也不会引起问题，例如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">^\d+$</div></pre></td></tr></table></figure>
 <ul>
-<li><p>1）23x<br>23,<strong>x</strong>　　2,<strong>3x</strong>    　　<strong>23x</strong><br>标粗部分为确认不匹配的部分，第一次遇到不匹配时回溯到上一个继续进行匹配，共<strong>3</strong>次</p>
+<li><p>1）23x<br>23,<code>x</code>　　2,<code>3x</code>    　　<code>23x</code><br>标粗部分为确认不匹配的部分，第一次遇到不匹配时回溯到上一个继续进行匹配，共<code>3</code>次</p>
 </li>
-<li><p>2）123x<br>123,<strong>x</strong>　　12,<strong>3x</strong>　　1,<strong>23x</strong>　　<strong>123x</strong><br>标粗部分为确认不匹配的部分，第一次遇到不匹配时回溯到上一个继续进行匹配，共<strong>4</strong>次</p>
+<li><p>2）123x<br>123,<code>x</code>　　12,<code>3x</code>　　1,<code>23x</code>　　<code>123x</code><br>标粗部分为确认不匹配的部分，第一次遇到不匹配时回溯到上一个继续进行匹配，共<code>4</code>次</p>
 </li>
 </ul>
-<p>此时呈<strong>线性</strong>增长。</p>
+<p>此时呈<code>线性</code>增长。</p>
 <p>但是，如果使用重复性分组正则表达式来进行匹配，则可能引起问题，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">^\(d+)+$</div></pre></td></tr></table></figure></p>
 <ul>
-<li><p>1）23x<br>23,<strong>x</strong>　　2,3,<strong>x</strong>　　2,<strong>3x</strong>    　　<strong>23x</strong><br>标粗部分为确认不匹配的部分，迭代多次才能确认原字符串不匹配，总共需要<strong>2^2 = 4</strong>次</p>
+<li><p>1）23x<br>23,<code>x</code>　　2,3,<code>x</code>　　2,<code>3x</code>    　　<code>23x</code><br>标粗部分为确认不匹配的部分，迭代多次才能确认原字符串不匹配，总共需要<code>2^2 = 4</code>次</p>
 </li>
-<li><p>2）123x<br>123,<strong>x</strong>　　12,3,<strong>x</strong>　　12,<strong>3x</strong>　　1,23,<strong>x</strong>　　1,2,3,<strong>x</strong>　　1,2,<strong>3x</strong>　　1,<strong>23x</strong>　　<strong>123x</strong><br>标粗部分为确认不匹配的部分，迭代多次才能确认原字符串不匹配，总共需要<strong>2^3 = 8</strong>次</p>
+<li><p>2）123x<br>123,<code>x</code>　　12,3,<code>x</code>　　12,<code>3x</code>　　1,23,<code>x</code>　　1,2,3,<code>x</code>　　1,2,<code>3x</code>　　1,<code>23x</code>　　<code>123x</code><br>标粗部分为确认不匹配的部分，迭代多次才能确认原字符串不匹配，总共需要<code>2^3 = 8</code>次</p>
 </li>
 </ul>
-<p>此时呈<strong>指数</strong>增长。</p>
+<p>此时呈<code>指数</code>增长。</p>
 <p><br></p>
 <h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># coding:utf-8</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> time</div><div class="line"><span class="keyword">import</span> re</div><div class="line"></div><div class="line">strs = (</div><div class="line">    <span class="string">'1234567890x'</span>,</div><div class="line">    <span class="string">'12345678901234567890x'</span>,</div><div class="line">    <span class="string">'1234567890123456789012345x'</span>,</div><div class="line">    <span class="string">'12345678901234567890123456x'</span>,</div><div class="line">    <span class="string">'123456789012345678901234567x'</span>,</div><div class="line">    <span class="string">'1234567890123456789012345678x'</span>,</div><div class="line">    <span class="string">'12345678901234567890123456789x'</span></div><div class="line">)</div><div class="line">regex = <span class="string">'^(\d+)+$'</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">fun</span><span class="params">(strs, regex)</span>:</span></div><div class="line">    t1 = time.time()</div><div class="line">    result = re.compile(regex).match(strs)</div><div class="line">    t2 = time.time()</div><div class="line">    print(<span class="string">"%s : %s : %.2f"</span> % (strs, str(result), (t2 - t1)))</div><div class="line"></div><div class="line"><span class="keyword">for</span> s <span class="keyword">in</span> strs:</div><div class="line">    fun(s, regex)</div></pre></td></tr></table></figure>
 <p>运行结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">C:\Python\Python36\python.exe D:/python/get_hi3ms_user_files/redos/redos.py</div><div class="line">1234567890x : None : 0.00</div><div class="line">12345678901234567890x : None : 0.09</div><div class="line">1234567890123456789012345x : None : 2.95</div><div class="line">12345678901234567890123456x : None : 5.92</div><div class="line">123456789012345678901234567x : None : 12.51</div><div class="line">1234567890123456789012345678x : None : 24.68</div><div class="line">12345678901234567890123456789x : None : 52.39</div><div class="line"></div><div class="line">Process finished with exit code 0</div></pre></td></tr></table></figure></p>
@@ -518,7 +518,7 @@
 <!--  <p><span>本文标题:</span><a href="/2017/09/13/redos/">Redos攻击原理与检测防御</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cookia 的个人博客">Cookia</a></p>
   <p><span>发布时间:</span>2017年09月13日 - 22:09</p>
-  <p><span>最后更新:</span>2017年09月24日 - 19:09</p>
+  <p><span>最后更新:</span>2017年12月22日 - 22:12</p>
 -->
   <p><span>文章作者:</span><a href="/" title="访问 Cookia 的个人博客">Cookia</a></p>
   <p><span>原始链接:</span><a href="/2017/09/13/redos/" title="Redos攻击原理与检测防御">http://cookia.cc/2017/09/13/redos/</a>
@@ -662,7 +662,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -684,7 +684,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
