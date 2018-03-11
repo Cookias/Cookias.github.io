@@ -96,19 +96,19 @@
 
 
 
-<meta name="description" content="Web安全测试主要分为黑盒测试和白盒测试:黑盒测试是指测试人员不清楚Web具体的架构和实现，通过模拟一个或多个攻击角色进行渗透测试，发现潜在的安全漏洞和风险，它不会泄露系统源码。白盒测试则需要开发人员提供相关的设计文档、源码、使用手册、业务逻辑等信息，对源代码直接进行安全分析，来寻找安全漏洞和可能存在的风险，它主要用于公司内部进行深度安全测试。代码审计是白盒测试常用的一种方法。代码审计渗透测试则">
+<meta name="description" content="做为一枚纯正的甲方安全人员，代码审计是必备技能点。在实际工作中，代码审计无论是在安全测试中所占的投入比重，亦或是在发现产品/项目安全漏洞中的比例，都比黑盒渗透要大的多。因此，博主特意开辟了该代码审计系列博文，结合了博主在某厂实际工作中的工作经历和厂内大牛前辈们的经验，稍加提炼而成。在正式开始专项之前，先简单介绍下“代码审计渗透测试”这个自创的新词：一般来讲，Web安全测试主要分为黑盒测试和白盒测">
 <meta name="keywords" content="代码审计,白盒测试,渗透测试,SQL注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="代码审计渗透测试（一） SQL注入">
 <meta property="og:url" content="http://cookia.cc/2017/12/26/sql_injection/index.html">
 <meta property="og:site_name" content="Cookia&#39;s Notes">
-<meta property="og:description" content="Web安全测试主要分为黑盒测试和白盒测试:黑盒测试是指测试人员不清楚Web具体的架构和实现，通过模拟一个或多个攻击角色进行渗透测试，发现潜在的安全漏洞和风险，它不会泄露系统源码。白盒测试则需要开发人员提供相关的设计文档、源码、使用手册、业务逻辑等信息，对源代码直接进行安全分析，来寻找安全漏洞和可能存在的风险，它主要用于公司内部进行深度安全测试。代码审计是白盒测试常用的一种方法。代码审计渗透测试则">
+<meta property="og:description" content="做为一枚纯正的甲方安全人员，代码审计是必备技能点。在实际工作中，代码审计无论是在安全测试中所占的投入比重，亦或是在发现产品/项目安全漏洞中的比例，都比黑盒渗透要大的多。因此，博主特意开辟了该代码审计系列博文，结合了博主在某厂实际工作中的工作经历和厂内大牛前辈们的经验，稍加提炼而成。在正式开始专项之前，先简单介绍下“代码审计渗透测试”这个自创的新词：一般来讲，Web安全测试主要分为黑盒测试和白盒测">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://cookia.cc/assets/blogimg/security/security-1.jpg">
-<meta property="og:updated_time" content="2017-12-26T13:43:11.934Z">
+<meta property="og:updated_time" content="2018-03-11T14:20:43.127Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="代码审计渗透测试（一） SQL注入">
-<meta name="twitter:description" content="Web安全测试主要分为黑盒测试和白盒测试:黑盒测试是指测试人员不清楚Web具体的架构和实现，通过模拟一个或多个攻击角色进行渗透测试，发现潜在的安全漏洞和风险，它不会泄露系统源码。白盒测试则需要开发人员提供相关的设计文档、源码、使用手册、业务逻辑等信息，对源代码直接进行安全分析，来寻找安全漏洞和可能存在的风险，它主要用于公司内部进行深度安全测试。代码审计是白盒测试常用的一种方法。代码审计渗透测试则">
+<meta name="twitter:description" content="做为一枚纯正的甲方安全人员，代码审计是必备技能点。在实际工作中，代码审计无论是在安全测试中所占的投入比重，亦或是在发现产品/项目安全漏洞中的比例，都比黑盒渗透要大的多。因此，博主特意开辟了该代码审计系列博文，结合了博主在某厂实际工作中的工作经历和厂内大牛前辈们的经验，稍加提炼而成。在正式开始专项之前，先简单介绍下“代码审计渗透测试”这个自创的新词：一般来讲，Web安全测试主要分为黑盒测试和白盒测">
 <meta name="twitter:image" content="http://cookia.cc/assets/blogimg/security/security-1.jpg">
 
 
@@ -412,7 +412,7 @@
 
       
         <blockquote>
-<p>Web安全测试主要分为<code>黑盒测试</code>和<code>白盒测试</code>:<br><code>黑盒测试</code>是指测试人员不清楚Web具体的架构和实现，通过模拟一个或多个攻击角色进行渗透测试，发现潜在的安全漏洞和风险，它不会泄露系统源码。<br><code>白盒测试</code>则需要开发人员提供相关的设计文档、源码、使用手册、业务逻辑等信息，对源代码直接进行安全分析，来寻找安全漏洞和可能存在的风险，它主要用于公司内部进行深度安全测试。代码审计是白盒测试常用的一种方法。<br><code>代码审计渗透测试</code>则是将黑盒渗透测试的思路用于代码审计的一种方法，博主将开出系列文，从漏洞介绍、漏洞原理、测试思路和测试方法四个方面来阐述TOP N的Web安全漏洞的代码审计渗透测试。</p>
+<p>做为一枚纯正的甲方安全人员，代码审计是必备技能点。在实际工作中，代码审计无论是在安全测试中所占的投入比重，亦或是在发现产品/项目安全漏洞中的比例，都比黑盒渗透要大的多。因此，博主特意开辟了该代码审计系列博文，结合了博主在某厂实际工作中的工作经历和厂内大牛前辈们的经验，稍加提炼而成。<br>在正式开始专项之前，先简单介绍下“代码审计渗透测试”这个自创的新词：<br>一般来讲，Web安全测试主要分为<code>黑盒测试</code>和<code>白盒测试</code>:<br><code>黑盒测试</code>是指测试人员不清楚Web具体的架构和实现，通过模拟一个或多个攻击角色进行渗透测试，发现潜在的安全漏洞和风险，它不会泄露系统源码。<br><code>白盒测试</code>则需要开发人员提供相关的设计文档、源码、使用手册、业务逻辑等信息，对源代码直接进行安全分析，来寻找安全漏洞和可能存在的风险，它主要用于公司内部进行深度安全测试。代码审计是白盒测试常用的一种方法。<br><code>代码审计渗透测试</code>则是将黑盒渗透测试的思路用于代码审计的一种方法，博主将从漏洞介绍、漏洞原理、测试思路和测试方法四个方面来阐述TOP N的Web安全漏洞的代码审计渗透测试。</p>
 </blockquote>
 <p><img src="/assets/blogimg/security/security-1.jpg" width="100%"></p>
 <a id="more"></a>
@@ -494,7 +494,7 @@
 <!--  <p><span>本文标题:</span><a href="/2017/12/26/sql_injection/">代码审计渗透测试（一） SQL注入</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cookia 的个人博客">Cookia</a></p>
   <p><span>发布时间:</span>2017年12月26日 - 21:12</p>
-  <p><span>最后更新:</span>2017年12月26日 - 21:12</p>
+  <p><span>最后更新:</span>2018年03月11日 - 22:03</p>
 -->
   <p><span>文章作者:</span><a href="/" title="访问 Cookia 的个人博客">Cookia</a></p>
   <p><span>原始链接:</span><a href="/2017/12/26/sql_injection/" title="代码审计渗透测试（一） SQL注入">http://cookia.cc/2017/12/26/sql_injection/</a>
@@ -562,6 +562,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/26/1/" rel="prev" title="代码审计渗透测试（二） SQL注入">
+                代码审计渗透测试（二） SQL注入 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -638,7 +642,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -748,8 +752,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
